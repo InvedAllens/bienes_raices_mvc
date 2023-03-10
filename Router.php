@@ -21,7 +21,7 @@
             $autenticado=$_SESSION['login'] ?? null;
             $fn=null;
             //se obtienen los parametros de url y metodoatraves del server 
-            $urlActual=$_SERVER['PATH_INFO'];
+            $urlActual=strtok($_SERVER['REQUEST_URI'], '?') ?? '/';
             $metodo=$_SERVER['REQUEST_METHOD'];
             // debugear($_SERVER['REQUEST_METHOD']);
             if(in_array($urlActual,$this->rutasProtegidas) && !$autenticado){
