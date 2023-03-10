@@ -1,0 +1,24 @@
+{
+    "name": "aldoallende/bienes-raices-php",
+    "description": "usando poo en bienes raices",
+    "type": "project",
+    "authors": [
+        {
+            "name": "AldoAllens",
+            "email": "aldoallens1@gmail.com"
+        }
+    ],
+    "require": {
+        "intervention/image": "^2.7",
+        "phpmailer/phpmailer": "^6.7",
+        "vlucas/phpdotenv": "^5.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Model\\":"./models",
+            "MVC\\":"./",
+            "Controllers\\":"./controllers"
+        }
+    }
+
+}
