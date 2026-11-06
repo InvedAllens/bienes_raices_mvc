@@ -5,7 +5,6 @@
 
     use MVC\Router;
     use Model\Propiedad;
-    use PHPMailer\PHPMailer\PHPMailer;
     
     class PaginasController {
 
@@ -23,13 +22,14 @@
             $router->render("paginas/anuncios",["propiedades"=>$propiedades]);
         }
         public static function anuncio(Router $router){
-            $id=$_GET['id'];
-            $id=filter_var($id,FILTER_VALIDATE_INT);
-            if(!$id || !Propiedad::find($id)!=null){
-                header('Location:/anuncios');
-            }
+            $id=filter_var($_GET['id'] ?? null,FILTER_VALIDATE_INT);
             //obtener datos de la propiedad
-            $propiedad=Propiedad::find($id);
+            $propiedad=$id ? Propiedad::find($id) : false;
+            //si no existe se regresa al listado y se DETIENE la ejecucion
+            if(!$propiedad){
+                header('Location:'.url('/anuncios'));
+                exit;
+            }
             $router->render("paginas/anuncio",["propiedad"=>$propiedad]);
         }
 
@@ -40,68 +40,79 @@
             $router->render("paginas/entrada",[]);
         }
 
+        //lee un campo de texto del formulario de contacto (siempre devuelve un string limpio)
+        private static function campo($datos,$nombre,$maximo=500){
+            $valor=$datos[$nombre] ?? '';
+            return is_string($valor) ? mb_substr(trim($valor),0,$maximo) : '';
+        }
+
         public static function contacto(Router $router){
             $mensaje=null;
+            $claseMensaje='exito';
             if($_SERVER['REQUEST_METHOD']==='POST'){
-                //debugear($_POST['contacto']);
-                $resultado=$_POST['contacto'];
-                //creacion de una instancia de phpmailer
-                $mail=new PHPMailer();
-                //configuracion de conexion con el servicio de mailer SMTP
-                $mail->isSMTP();
-                $mail->Host='sandbox.smtp.mailtrap.io';
-                $mail->SMTPAuth=true;
-                $mail->Username='546e99008c2430';
-                $mail->Password='5481afa33c809f';
-                $mail->SMTPSecure='tls';
-                $mail->Port=2525;
-                //configurar el contenido del mail
-                $mail->setFrom('admin@bienesraices.com');
-                $mail->addAddress('admin@bienesraices.com','BienesRaices.com');
-                $mail->Subject="Un nuevo mensaje desde BienesRaices.com";
-                //habilitar html
-                $mail->isHTML(true);
-                $mail->CharSet='utf-8';
-                //definir el contenido
-                $contenido='<html>';
-                $contenido.='<p>un nuevo mensaje desde biene raices</p>';
-                $contenido.='<p>Nombre:'.$resultado['nombre'].'</p>';
-                
-                
-                $contenido.='<p>Mensaje:'.$resultado['mensaje'].'</p>';
-                $contenido.='<p>Quiere:'.$resultado['tipo'].'</p>';
-                $contenido.='<p>Presupuesto:$'.$resultado['presupuesto'].'</p>';
+                $datos=is_array($_POST['contacto'] ?? null) ? $_POST['contacto'] : [];
+                $nombre=self::campo($datos,'nombre',100);
+                $texto=self::campo($datos,'mensaje',2000);
+                $tipo=self::campo($datos,'tipo',20);
+                $presupuesto=self::campo($datos,'presupuesto',20);
+                $contacto=self::campo($datos,'contacto',20);
+                $telefono=self::campo($datos,'telefono',20);
+                $fecha=self::campo($datos,'fecha',20);
+                $hora=self::campo($datos,'hora',20);
+                $email=self::campo($datos,'email',100);
 
-                if($resultado['contacto']==="telefono"){
-                    $contenido.='<p>Elijio ser contactado por telefono</p>';
-                    $contenido.='<p>Telefono:'.$resultado['telefono'].'</p>';
-                    $contenido.='<p>Fecha para contactar:'.$resultado['fecha'].'</p>';
-                    $contenido.='<p>Hora para contactar:'.$resultado['hora'].'</p>';
+                if(self::campo($_POST,'sitio_web')!==''){
+                    //campo trampa oculto: solo lo llenan los robots. Se finge exito sin enviar nada
+                    $mensaje='El mensaje se envio correctamente';
+                }elseif(isset($_SESSION['ultimo_contacto']) && time()-(int)$_SESSION['ultimo_contacto']<30){
+                    //limite sencillo contra el envio masivo: un mensaje cada 30 segundos por visitante
+                    $mensaje='Espera unos segundos antes de enviar otro mensaje';
+                    $claseMensaje='error';
+                }elseif($nombre==='' || $texto==='' || !in_array($tipo,['comprar','vender'],true)){
+                    $mensaje='Completa tu nombre, tu mensaje y si quieres comprar o vender';
+                    $claseMensaje='error';
+                }elseif($contacto==='email' && !filter_var($email,FILTER_VALIDATE_EMAIL)){
+                    $mensaje='El email no es valido';
+                    $claseMensaje='error';
+                }elseif($presupuesto!=='' && !is_numeric($presupuesto)){
+                    $mensaje='El presupuesto debe ser un numero';
+                    $claseMensaje='error';
+                }else{
+                    //contenido del correo (todo lo que escribe el visitante se escapa antes de ponerlo en el html)
+                    $contenido='<html>';
+                    $contenido.='<p>un nuevo mensaje desde bienes raices</p>';
+                    $contenido.='<p>Nombre: '.s($nombre).'</p>';
+                    $contenido.='<p>Mensaje: '.s($texto).'</p>';
+                    $contenido.='<p>Quiere: '.s($tipo).'</p>';
+                    $contenido.='<p>Presupuesto: $'.s($presupuesto).'</p>';
+                    $plano="un nuevo mensaje desde bienes raices\nNombre: $nombre\nMensaje: $texto\nQuiere: $tipo\nPresupuesto: $presupuesto\n";
 
-                }else{
-                    $contenido.='<p>Elijio ser contactado por Email</p>';
-                    $contenido.='<p>Email:'.$resultado['email'].'</p>';
-                }
-                
-                //$contenido.='<p>Preferiere ser contactado por:'.$resultado['contacto'].'</p>';
-               
-                $contenido.='</html>';
-                $mail->Body=$contenido;
-                $mail->AltBody="un nuevo mensaje desde biene raices,
-                Nombre: $resultado[nombre]
-                Email:$resultado[email]
-                Mensaje:$resultado[mensaje]
-                Presupuesto:$resultado[presupuesto]
-                ";
-                //enviar email
-                if($mail->send()){
-                    $mensaje="El mensaje se envio correctamente";
-                }else{
-                    $mensaje='error al enviar el mensaje';
+                    if($contacto==='telefono'){
+                        $contenido.='<p>Elijio ser contactado por telefono</p>';
+                        $contenido.='<p>Telefono: '.s($telefono).'</p>';
+                        $contenido.='<p>Fecha para contactar: '.s($fecha).'</p>';
+                        $contenido.='<p>Hora para contactar: '.s($hora).'</p>';
+                        $plano.="Contactar por telefono: $telefono, fecha $fecha, hora $hora\n";
+                    }elseif($contacto==='email'){
+                        $contenido.='<p>Elijio ser contactado por Email</p>';
+                        $contenido.='<p>Email: '.s($email).'</p>';
+                        $plano.="Contactar por email: $email\n";
+                    }
+                    $contenido.='</html>';
+
+                    $destino=env('CONTACTO_EMAIL',env('MAIL_FROM','contacto@bienesraices.com'));
+                    //enviar email
+                    if(enviarCorreo($destino,'Un nuevo mensaje desde BienesRaices.com',$contenido,$plano,$contacto==='email' ? $email : '')){
+                        $mensaje='El mensaje se envio correctamente';
+                        $_SESSION['ultimo_contacto']=time();
+                    }else{
+                        $mensaje='error al enviar el mensaje';
+                        $claseMensaje='error';
+                    }
                 }
 
             }
-            $router->render("paginas/contacto",["mensaje"=>$mensaje]);
+            $router->render("paginas/contacto",["mensaje"=>$mensaje,"claseMensaje"=>$claseMensaje]);
         }
 
     }

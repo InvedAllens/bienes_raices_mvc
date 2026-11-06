@@ -1,8 +1,10 @@
-#excluyendo carpetas autogenerativas 
-src/
-node_modules/
+# dependencias (se instalan con composer install / npm install)
 vendor/
-gulpfile.js
-package.json
-package-lock.json
+node_modules/
+
+# configuracion local y secretos: NUNCA subir
 .env
+
+# sistema
+.DS_Store
+Thumbs.db

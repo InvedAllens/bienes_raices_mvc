@@ -1,9 +1,9 @@
 <main class="contenedor seccion">
         <h1>Actualizar propiedad</h1>
-        <a href="/admin" class="boton-verde boton">volver</a>
+        <a href="<?php echo BASE_PATH; ?>/admin" class="boton-verde boton">volver</a>
         <?php foreach($errores as $error):?>
             <div class="alerta error">
-                <?php echo $error;?>
+                <?php echo s($error);?>
             </div>    
         <?php endforeach; ?>
         <form class="form" method="POST"  enctype="multipart/form-data">
@@ -20,7 +20,7 @@
                 <input type="file" id="imagen" name="propiedad[imagen]" accept="image/jpeg,image/png">
                 <?php 
                     if($propiedad->imagen):?>
-                        <img src="../../imagenes/<?php echo $propiedad->imagen ?>" alt="imagen de la propiedad a actualizar" class="imagen-actualizar">
+                        <img src="<?php echo BASE_PATH; ?>/imagenes/<?php echo s($propiedad->imagen); ?>" alt="imagen de la propiedad a actualizar" class="imagen-actualizar">
                     <?php endif;?>
                 
                 <label for="descripcion">Descripcion:</label>
@@ -47,7 +47,7 @@
                     <?php foreach($vendedores as $vendedor): ?>
                         <option <?php echo $propiedad->vendedores_idvendedor===$vendedor->idvendedor ? 'selected':'' ?> 
                         value="<?php echo s($vendedor->idvendedor); ?>" >
-                        <?php echo $vendedor->nombre." ".$vendedor->apellido;?></option>
+                        <?php echo s($vendedor->nombre." ".$vendedor->apellido);?></option>
                     <?php endforeach; ?>
                     
                 </select>

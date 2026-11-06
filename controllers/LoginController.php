@@ -5,13 +5,12 @@
     class LoginController{
 
         public static function login(Router $router){
-            $admin=new Admin();
+            $auth=new Admin();
             $errores=[];
             if($_SERVER['REQUEST_METHOD']==='POST'){
                 $auth=new Admin($_POST);
                 $auth->validar();
                 $errores=Admin::getErrores();
-                // debugear($admin);
                 if(empty($errores)){
                     //verificamos que existe el usuario
                     $usuario=$auth->validarUsuario();
@@ -19,15 +18,12 @@
                         $errores=Admin::getErrores();
                     }else{
                         //verificamos el password
-                        $authenticado=$auth->validarPassword($usuario);
-                        if(!$authenticado){
-                            //si no esta authenticado obtenemos el arreglo de errores actualizado
-                            $errores=Admin::getErrores();
-                        }else{
-                            //si esta authenticado llamamos a la funcion autenticar para inicia session y definir parametros
+                        if($auth->validarPassword($usuario)){
+                            //si esta authenticado llamamos a la funcion autenticar para inicia session y redirigir
                             $auth->autenticar();
                         }
-
+                        //si no esta authenticado obtenemos el arreglo de errores actualizado
+                        $errores=Admin::getErrores();
                     }
 
                 }
@@ -35,9 +31,10 @@
             $router->render("auth/login",["errores"=>$errores,"auth"=>$auth]);
         }
         public static function logout(){
-            session_start();
             $_SESSION=[];
-            header('Location:/index');
+            session_destroy();
+            header('Location:'.url('/index'));
+            exit;
         }
 
     }

@@ -1,9 +1,9 @@
 <main class="contenedor seccion contenido-centrado">
         <h1>Guia para la decoracion de tu hogar</h1>
         <picture>
-            <source srcset="build/img/destacada2.webp" type="image/webp">
-            <source srcset="build/img/destacada2.jpg" type="image/jpg">
-            <img loading="lazy" src="build/img/destacada2.jpg" alt="imagen de la propiedad">
+            <source srcset="<?php echo BASE_PATH; ?>/build/img/destacada2.webp" type="image/webp">
+            <source srcset="<?php echo BASE_PATH; ?>/build/img/destacada2.jpg" type="image/jpg">
+            <img loading="lazy" src="<?php echo BASE_PATH; ?>/build/img/destacada2.jpg" alt="imagen de la propiedad">
         </picture>
         <p class="info-meta">Escrito el:<span>24/01/2023</span> por: <span>Admin</span></p>
         <div class="resumen-propiedad">           

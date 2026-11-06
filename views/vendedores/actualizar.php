@@ -1,9 +1,9 @@
 <main class="contenedor seccion">
         <h1>Actualizar Vendedor(a)</h1>
-        <a href="/admin" class="boton-amarillo boton">volver</a>
+        <a href="<?php echo BASE_PATH; ?>/admin" class="boton-amarillo boton">volver</a>
         <?php foreach($errores as $error):?>
             <div class="alerta error">
-                <?php echo $error;?>
+                <?php echo s($error);?>
             </div>    
         <?php endforeach; ?>
         <form class="form" method="POST">

@@ -1,23 +1,23 @@
 <main class="contenedor seccion contenido-centrado">
         <h1><?php echo s($propiedad->titulo) ?></h1>
         <picture>
-            <!-- <source srcset="build/img/destacada.webp" type="image/webp">
-            <source srcset="build/img/destacada.jpg" type="image/jpg"> -->
-            <img loading="lazy" src="imagenes/<?php echo s($propiedad->imagen);  ?>" alt="imagen de la propiedad">
+            <!-- <source srcset="<?php echo BASE_PATH; ?>/build/img/destacada.webp" type="image/webp">
+            <source srcset="<?php echo BASE_PATH; ?>/build/img/destacada.jpg" type="image/jpg"> -->
+            <img loading="lazy" src="<?php echo BASE_PATH; ?>/imagenes/<?php echo s($propiedad->imagen);  ?>" alt="imagen de la propiedad">
         </picture>
         <div class="resumen-propiedad">
-            <p class="precio">$<?php echo number_format(s($propiedad->precio));  ?></p>
+            <p class="precio">$<?php echo s(number_format((float)$propiedad->precio));  ?></p>
             <ul class="iconos-caracteristicas">
                 <li>
-                    <img class="icono" loading="lazy" src="build/img/icono_wc.svg" alt="icono wc">
+                    <img class="icono" loading="lazy" src="<?php echo BASE_PATH; ?>/build/img/icono_wc.svg" alt="icono wc">
                     <p><?php echo s($propiedad->wc);  ?></p>
                 </li>
                 <li>
-                    <img class="icono" loading="lazy" src="build/img/icono_estacionamiento.svg" alt="icono estacionamiento">
+                    <img class="icono" loading="lazy" src="<?php echo BASE_PATH; ?>/build/img/icono_estacionamiento.svg" alt="icono estacionamiento">
                     <p><?php echo s($propiedad->estacionamiento);  ?></p>
                 </li>
                 <li>
-                    <img class="icono" loading="lazy" src="build/img/icono_dormitorio.svg" alt="icono dormitorio">
+                    <img class="icono" loading="lazy" src="<?php echo BASE_PATH; ?>/build/img/icono_dormitorio.svg" alt="icono dormitorio">
                     <p><?php echo s($propiedad->habitaciones);  ?></p>
                 </li>
             </ul><!--lista de iconos anuncio-->

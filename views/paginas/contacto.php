@@ -2,12 +2,12 @@
         <h1>Contacto</h1>
         <?php 
             if($mensaje):?>
-            <p class="alerta exito"><?php echo $mensaje;?></p>
+            <p class="alerta <?php echo s($claseMensaje); ?>"><?php echo s($mensaje);?></p>
         <?php endif;?>
         <picture>
-            <source srcset="build/img/destacada3.webp" type="image/webp">
-            <source srcset="build/img/destacada3.jpg" type="image/jpg">
-            <img loading="lazy" width="200" height="300" src="build/img/destacada3.jpg" alt="imagen contacto">
+            <source srcset="<?php echo BASE_PATH; ?>/build/img/destacada3.webp" type="image/webp">
+            <source srcset="<?php echo BASE_PATH; ?>/build/img/destacada3.jpg" type="image/jpg">
+            <img loading="lazy" width="200" height="300" src="<?php echo BASE_PATH; ?>/build/img/destacada3.jpg" alt="imagen contacto">
         </picture>
         <h2>Llene el formulario de contacto</h2>
 
@@ -48,6 +48,11 @@
                 <!--elejir ser contactado -->
 
             </fieldset>
+            <!-- campo trampa para robots: las personas no lo ven -->
+            <div style="position:absolute;left:-9999px" aria-hidden="true">
+                <label for="sitio_web">No llenar este campo</label>
+                <input type="text" id="sitio_web" name="sitio_web" tabindex="-1" autocomplete="off">
+            </div>
             <input type="submit" class="boton-verde">
 
         </form>

@@ -2,6 +2,7 @@
     namespace Model;
 class Propiedad extends ActiveRecord{
     protected static $tabla='propiedades';
+    protected static $columnaId='idpropiedad';
     protected static $columnasDb=['idpropiedad','titulo','precio','imagen','descripcion','habitaciones','wc','estacionamiento','creado','vendedores_idvendedor'];
     public $idpropiedad;
     public $titulo;
@@ -24,33 +25,42 @@ class Propiedad extends ActiveRecord{
             $this->habitaciones=$args['habitaciones'] ?? '';
             $this->wc=$args['wc'] ?? '';
             $this->estacionamiento=$args['estacionamiento'] ?? '';
-            $this->creado=date('Y,m,d');
+            $this->creado=date('Y-m-d');
             $this->vendedores_idvendedor=$args['vendedores_idvendedor'] ?? '';
         }
 
+        //un entero positivo de 1 a 9 (los mismos limites que tienen los campos del formulario)
+        private static function enteroValido($valor){
+            $valor=(string)$valor;
+            return ctype_digit($valor) && (int)$valor>=1 && (int)$valor<=9;
+        }
+
         public function validar(){
-            if(!s($this->titulo) || s(strlen($this->titulo))>45){
+            parent::validar();
+            $titulo=trim((string)$this->titulo);
+            if($titulo==='' || mb_strlen($titulo)>45){
                 self::$errores[]='debes de añadir un titulo maximo 45 caracteres';
             }
-            if(!s($this->precio)){
-                self::$errores[]='Debes de añadir un precio';
+            if(!is_numeric($this->precio) || (float)$this->precio<=0 || (float)$this->precio>99999999){
+                self::$errores[]='Debes de añadir un precio valido (solo numeros)';
             }
-            if(s(strlen($this->descripcion)<70)){
+            if(mb_strlen(trim((string)$this->descripcion))<70){
                 self::$errores[]='La descripcion debe contener almenos 70 caracteres';
             }
-            if(!s($this->habitaciones)){
-                self::$errores[]='El numero de habitaciones es obligatorio';
+            if(!self::enteroValido($this->habitaciones)){
+                self::$errores[]='El numero de habitaciones es obligatorio (de 1 a 9)';
             }
-            if(!s($this->wc)){
-                self::$errores[]='El numero de baños es obligatorio';
+            if(!self::enteroValido($this->wc)){
+                self::$errores[]='El numero de baños es obligatorio (de 1 a 9)';
             }
-            if(!s($this->estacionamiento)){
-                self::$errores[]='El numero de lugares de estacionamiento es obligatorio';
+            if(!self::enteroValido($this->estacionamiento)){
+                self::$errores[]='El numero de lugares de estacionamiento es obligatorio (de 1 a 9)';
             }
-            if(!s($this->vendedores_idvendedor)){
+            $vendedor=(string)$this->vendedores_idvendedor;
+            if(!ctype_digit($vendedor) || !Vendedor::find($vendedor)){
                 self::$errores[]='Elije un vendedor';
             }
-            if(!s($this->imagen)){
+            if(!$this->imagen){
                 self::$errores[]='La imagen de la propiedad es obligatoria';
             }
     
@@ -58,4 +68,3 @@ class Propiedad extends ActiveRecord{
         }
 
 }
-  

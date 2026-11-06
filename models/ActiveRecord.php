@@ -8,130 +8,107 @@
         protected static $columnasDb=[];
         protected static $errores=[];
         protected static $tabla='';
+        //nombre de la columna llave primaria de la tabla (cada modelo define la suya)
+        protected static $columnaId='id';
        
         public $imagen;
-        
+
+        //convierte un valor ya sanitizado en texto para la consulta (null => NULL)
+        protected static function valorSql($valor){
+            return is_null($valor) ? 'NULL' : "'".$valor."'";
+        }
+        //escapa un valor para poder usarlo con seguridad dentro de una consulta
+        protected static function escapar($valor){
+            return self::$db->escape_string((string)$valor);
+        }
         
         public function guardar(){
             //sanitizar datos
             $sanitizados=$this->sanitizar();
             
-            //consulta a la base de datos
+            //consulta a la base de datos: INSERT INTO tabla (col1,col2) VALUES ('v1','v2')
+            $valores=[];
+            foreach($sanitizados as $valor){
+                $valores[]=static::valorSql($valor);
+            }
             $query="INSERT INTO ".static::$tabla." (";
             // join convierte a string el array, el pimer parametro es la separacion el segundo el array
-            // array_keys solo obtiene las llaves y son almacenadas en un arreglo
-            //al final el $query.= concatena lo que habia en el $query previamente
+            // array_keys solo obtiene las llaves
             $query.=join(",",array_keys($sanitizados));
-            $query.=") VALUES ('";
-            $query.=join("','",array_values($sanitizados));
-            $query.="')";
-
-            // $query="INSERT INTO propiedades o vendedores (titulo,precio,imagen,descripcion,habitaciones,wc,estacionamiento,creado,vendedores_idvendedor) 
-            // VALUES('$this->titulo','$this->precio','$this->imagen','$this->descripcion','$this->habitaciones','$this->wc','$this->estacionamiento'
-            // ,'$this->creado','$this->vendedores_idvendedor')";
+            $query.=") VALUES (";
+            $query.=join(",",$valores);
+            $query.=")";
 
             //primero accedemos a la propiedad estatica, que ya ha sido establecida desde app.php con el metodo publico estatico
-            //setDb, se le asigno la conexion o un objeto de la clase mysqli con las credenciales de la conexion(base de datos, usuario etc.)
+            //setDb, se le asigno la conexion o un objeto de la clase mysqli con las credenciales de la conexion
             $resultado=self::$db->query($query);
             return $resultado;
         }
+        //elimina el registro de la base de datos. Devuelve true/false (las redirecciones y el borrado de
+        //la imagen le corresponden al controlador)
         public function eliminar(){
-            if(static::$tabla==='propiedades'){
-                $idtabla="idpropiedad";
-            }elseif(static::$tabla==='vendedores'){
-                $idtabla="idvendedor";
-            }
-            $id=self::$db->escape_string($this->$idtabla);
-            $consultaEliminar="DELETE FROM ".static::$tabla." WHERE ".$idtabla."=$id";
-            $resultado=self::$db->query($consultaEliminar);
-            if(isset($this->$idtabla)){
-                $existeArchivo=file_exists(CARPETA_IMAGENES.$this->imagen);
-                // debugear($existeArchivo);
-                if($existeArchivo){
-                    unlink(CARPETA_IMAGENES.$this->imagen);
-                }
-            }
-
-            if($resultado){
-                header('Location:/admin?resultado=3');
-            }
-
-
+            $id=static::escapar($this->{static::$columnaId});
+            $consultaEliminar="DELETE FROM ".static::$tabla." WHERE ".static::$columnaId."='".$id."' LIMIT 1";
+            return self::$db->query($consultaEliminar);
         }
-    //funcion estatica publica para establecer la conexion con la base de ddtos, en este proyecto es establecida 
-    //desde app.php 
+        //funcion estatica publica para establecer la conexion con la base de ddtos, en este proyecto es establecida 
+        //desde app.php 
         public static function setDb($database){
             self::$db=$database;
         }
-     //funcion para copiar las propiedades del objeto en un array(propiedad y valor), se utilizara para otras funciones como sanitizar
+        //funcion para copiar las propiedades del objeto en un array(propiedad y valor), se utilizara para otras funciones como sanitizar
         public function atributos(){
-            if(static::$tabla==='propiedades'){
-                $idtabla="idpropiedad";
-            }elseif(static::$tabla==='vendedores'){
-                $idtabla="idvendedor";
-            }
             $atributos=[];
             foreach(static::$columnasDb as $columna):
-                if($columna===$idtabla){continue;}
+                if($columna===static::$columnaId){continue;}
                 $atributos[$columna]=$this->$columna;
             endforeach;
             return $atributos;
         }
-    //funcion que sanitiza los string para evitar inyecciones sql(escapa todos los caracteres que podrian afectar una sentencia sql)
+        //funcion que sanitiza los valores para evitar inyecciones sql(escapa todos los caracteres que podrian afectar una sentencia sql)
         public function sanitizar(){
             $sanitizados=[];
             foreach($this->atributos() as $key=>$value):
-                $sanitizados[$key]=self::$db->escape_string($value);
+                $sanitizados[$key]=is_null($value) ? null : static::escapar($value);
             endforeach;
             return $sanitizados;
         }
-    //funcion para obtener los errores
+        //funcion para obtener los errores
         public static function getErrores(){
            return static::$errores;
         }
-    //funcion para validar los valores de los atributos del objeto
+        //funcion para validar los valores de los atributos del objeto
         public function validar(){
            static::$errores=[];
                 
         }
-    //asigna una imagen(nombre imagen) al atributo imagen
+        //asigna el nombre de la nueva imagen al atributo imagen (el archivo anterior lo borra el controlador
+        //DESPUES de guardar los cambios, para no perder la foto si algo falla)
         public function setImagen($imagen){
-            if(static::$tabla==='propiedades'){
-                $idtabla="idpropiedad";
-            }elseif(static::$tabla==='vendedores'){
-                $idtabla="idvendedor";
-            }
-            //para actualizar se verifica si existe un hay id en la instancia, deberia haberla
-            if(!is_null($this->$idtabla)){
-                $existeArchivo=file_exists(__DIR__.'/../imagenes/'.$this->imagen);
-                // debugear($existeArchivo);
-                if($existeArchivo){
-                    unlink(__DIR__.'/../imagenes/'.$this->imagen);
-                }
-            }
-
             if($imagen){
                 $this->imagen=$imagen;
             }
         }
-    //funcion estatica para obtener todos los registros de propiedadades
+        //funcion estatica para obtener todos los registros de propiedadades
         public static function all(){
             $query="SELECT * FROM ".static::$tabla;
             $resultado=self::consultaSQL($query);
             return $resultado;
         }
-    //funcion estatica para obtener un numero determinado de propiedadades
+        //funcion estatica para obtener un numero determinado de propiedadades
         public static function get($cantidad){
-            $query="SELECT * FROM ".static::$tabla." LIMIT ".$cantidad;
+            $query="SELECT * FROM ".static::$tabla." LIMIT ".(int)$cantidad;
             $resultado=self::consultaSQL($query);
             return $resultado;
         }
-     //funcion estatica y protected para consultar en la base de datos
+        //funcion estatica y protected para consultar en la base de datos
         protected static function consultaSQL($query){
             $resConsulta=self::$db->query($query);
             $array=[];
+            if(!$resConsulta){
+                return $array;
+            }
             while($registro=$resConsulta->fetch_assoc()):
-                //debugear($registro);
                 $array[]=static::crearObjeto($registro);
             endwhile;
             //liberar memoria
@@ -151,46 +128,48 @@
             return $instancia;
         }
 
+        //busca un registro por su llave primaria. Devuelve el objeto o false si no existe
         public static function find($id){
-            if(static::$tabla==='propiedades'){
-                $idtabla="idpropiedad";
-            }elseif(static::$tabla==='vendedores'){
-                $idtabla="idvendedor";
-            }
-           $query="SELECT * FROM ".static::$tabla." WHERE ".$idtabla."=$id";
+           $query="SELECT * FROM ".static::$tabla." WHERE ".static::$columnaId."='".static::escapar($id)."' LIMIT 1";
            $resultado=self::consultaSQL($query);
            return  current($resultado);            
         }
-        public function sincronizar($args){
+        //busca el primer registro cuyo campo tenga ese valor. Devuelve el objeto o false
+        public static function where($campo,$valor){
+            //el nombre del campo no se puede escapar como un valor, asi que solo se aceptan columnas del modelo
+            if(!in_array($campo,static::$columnasDb,true)){
+                throw new \InvalidArgumentException("Columna no valida: ".$campo);
+            }
+            $query="SELECT * FROM ".static::$tabla." WHERE ".$campo."='".static::escapar($valor)."' LIMIT 1";
+            $resultado=self::consultaSQL($query);
+            return current($resultado);
+        }
+        //copia los datos recibidos al objeto. NO escapa nada (eso lo hace sanitizar al guardar).
+        //$permitidos limita que campos se pueden asignar: asi nadie puede enviar por ejemplo idpropiedad
+        //en un formulario para modificar otro registro
+        public function sincronizar($args,$permitidos=null){
             foreach($args as $key=>$value):
-                if(property_exists($this,$key) && !is_null($value)):
-                    $this->$key=self::$db->escape_string($value);
+                if(is_array($permitidos) && !in_array($key,$permitidos,true)){
+                    continue;
+                }
+                if(property_exists($this,$key) && is_scalar($value)):
+                    $this->$key=$value;
                 endif;
             endforeach;
             return $this;
         }
         public function actualizar(){
-            if(static::$tabla==='propiedades'){
-                $idtabla="idpropiedad";
-            }elseif(static::$tabla==='vendedores'){
-                $idtabla="idvendedor";
-            }
             //primero hay que sanitizar los datos denuevo
             $sanitizados=$this->sanitizar();
             $valoresSet=[];
             foreach($sanitizados as $key=>$value):
-                $valoresSet[]="$key='$value'";
+                $valoresSet[]=$key."=".static::valorSql($value);
             endforeach;
-            //debugear($valoresSet);
             $query="UPDATE ".static::$tabla." SET ";
             $query.=join(",",$valoresSet);
-            $query.=" WHERE ".$idtabla."='".self::$db->escape_string($this->$idtabla)."'";
+            $query.=" WHERE ".static::$columnaId."='".static::escapar($this->{static::$columnaId})."'";
             $query.=" LIMIT 1";
             $resultado=self::$db->query($query);            
             return $resultado;
-            //debugear($query);
-            // $query= titulo='$this->titulo',precio='$this->precio',imagen='$this->imagen',descripcion='$this->descripcion'
-            // ,habitaciones=$this->habitaciones,wc=$this->wc,estacionamiento=$this->estacionamiento,vendedores_idvendedor='$this->vendedores_idvendedor' 
-            // WHERE idpropiedad=$propiedadId";
-    }
+        }
     }

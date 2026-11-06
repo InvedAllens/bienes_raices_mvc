@@ -6,22 +6,26 @@
 
     class VendedorController{
 
+        //unicos campos del formulario que se copian al vendedor (nunca el id)
+        private const CAMPOS=['nombre','apellido','telefono'];
+
         public static function crear(Router $router){
             $vendedor=new Vendedor;
-            $errores=Vendedor::getErrores();
+            $errores=[];
             if($_SERVER['REQUEST_METHOD']==='POST'){
-                // debugear($_POST['vendedor']);
+                $args=$_POST['vendedor'] ?? [];
                 $vendedor=new Vendedor();
-                $vendedor->sincronizar($_POST['vendedor']);
-                // debugear($vendedor);
+                $vendedor->sincronizar(is_array($args) ? $args : [],self::CAMPOS);
                 $vendedor->validar();
                 $errores=Vendedor::getErrores();
                 if(empty($errores)){
         
                     $resultado=$vendedor->guardar();
                     if($resultado){
-                        header('Location:/admin?resultado=1');
+                        header('Location:'.url('/admin?resultado=1'));
+                        exit;
                     }
+                    $errores[]='No se pudieron guardar los datos';
         
                 }
                
@@ -32,24 +36,26 @@
                         ]);
         }
         public static function actualizar(Router $router){
-            $id=$_GET['id'];
-            $id=filter_var($id,FILTER_VALIDATE_INT);
-            if($id){
-                $vendedor=Vendedor::find($id);
-            }else{
-                header('Location:/admin');
+            $id=filter_var($_GET['id'] ?? null,FILTER_VALIDATE_INT);
+            $vendedor=$id ? Vendedor::find($id) : false;
+            //si no existe el vendedor se regresa al panel y se DETIENE la ejecucion
+            if(!$vendedor){
+                header('Location:'.url('/admin'));
+                exit;
             }
-            $errores=Vendedor::getErrores();
-            $vendedor=Vendedor::find($id);
+            $errores=[];
             if($_SERVER['REQUEST_METHOD']==='POST'){
-                $vendedor->sincronizar($_POST['vendedor']);
+                $args=$_POST['vendedor'] ?? [];
+                $vendedor->sincronizar(is_array($args) ? $args : [],self::CAMPOS);
                 $vendedor->validar();
                 $errores=Vendedor::getErrores();
                 if(empty($errores)){
                     $resultado=$vendedor->actualizar();
                     if($resultado){
-                        header('Location:/admin?resultado=2');
+                        header('Location:'.url('/admin?resultado=2'));
+                        exit;
                     }
+                    $errores[]='No se pudieron actualizar los datos';
                 }
             }
             $router->render("vendedores/actualizar",

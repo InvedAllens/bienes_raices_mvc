@@ -1,13 +1,13 @@
 <main class="contenedor seccion">
         <h1>Crear Propiedad</h1>
-        <a href="/admin" class="boton-verde boton">volver</a>
+        <a href="<?php echo BASE_PATH; ?>/admin" class="boton-verde boton">volver</a>
 
         <?php foreach($errores as $error):?>
             <div class="alerta error">
-                <?php echo $error;?>
+                <?php echo s($error);?>
             </div>    
         <?php endforeach; ?>
-        <form class="form" method="POST" action="/propiedades/crear" enctype="multipart/form-data">
+        <form class="form" method="POST" action="<?php echo BASE_PATH; ?>/propiedades/crear" enctype="multipart/form-data">
             <fieldset>
                 <legend>Informacion general de la propiedad</legend>
                 
@@ -44,7 +44,7 @@
                     <?php foreach($vendedores as $vendedor): ?>
                         <option <?php echo $propiedad->vendedores_idvendedor===$vendedor->idvendedor ? 'selected':'' ?> 
                         value="<?php echo s($vendedor->idvendedor); ?>" >
-                        <?php echo $vendedor->nombre." ".$vendedor->apellido;?></option>
+                        <?php echo s($vendedor->nombre." ".$vendedor->apellido);?></option>
                     <?php endforeach; ?>
                     
                 </select>
