@@ -1,10 +1,18 @@
+Options -Indexes
 <IfModule mod_negotiation.c>
     Options -MultiViews
 </IfModule>
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /
+
+    # Calcula en que ruta vive el sitio: "/" si esta en la raiz de un dominio, o por ejemplo "/bienes-raices/"
+    # si comparte dominio con otra app. Asi el mismo archivo funciona en los dos casos (con un
+    # "RewriteBase /" fijo, dentro de una ruta las peticiones irian a la raiz del dominio).
+    RewriteCond %{REQUEST_URI}::$1 ^(.*?/)(.*)::\2$
+    RewriteRule ^(.*)$ - [E=BASE:%1]
+
+    # todo lo que no sea un archivo o carpeta existente (css, js, imagenes) lo atiende index.php
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
+    RewriteRule ^(.*)$ %{ENV:BASE}index.php/$1 [QSA,PT,L]
 </IfModule>
