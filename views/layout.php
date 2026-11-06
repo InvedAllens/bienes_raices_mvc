@@ -61,6 +61,7 @@
         </div>  
     </footer>
     
+    <script>window.BASE_PATH=<?php echo json_encode(BASE_PATH,JSON_UNESCAPED_SLASHES); ?>;</script>
     <script src="<?php echo BASE_PATH; ?>/build/js/bundle.min.js"></script>
 </body>
 </html>
