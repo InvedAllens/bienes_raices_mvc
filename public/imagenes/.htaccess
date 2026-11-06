@@ -1,0 +1,4 @@
+# en esta carpeta solo se sirven imagenes: nunca se ejecuta ni se descarga codigo
+<FilesMatch "\.(php|phtml|phar|php[0-9])$">
+    Require all denied
+</FilesMatch>
