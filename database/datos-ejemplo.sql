@@ -4,6 +4,8 @@
 --      mysql -u root -p bienesraices < database/datos-ejemplo.sql
 -- =====================================================================
 
+SET NAMES utf8mb4;   -- el archivo esta en UTF-8: asi se importa bien sin importar la configuracion del cliente
+
 INSERT INTO vendedores (nombre, apellido, telefono) VALUES
   ('Laura', 'Gomez', '5551234567'),
   ('Mario', 'Ruiz',  '5557654321');

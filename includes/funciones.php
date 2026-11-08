@@ -51,7 +51,7 @@
     }
     //Escapa el html (agrega seguridad contra XSS al mostrar datos en las vistas)
     function s($html):string{
-        return htmlspecialchars((string)$html,ENT_QUOTES,'UTF-8');
+        return htmlspecialchars((string)$html,ENT_QUOTES | ENT_SUBSTITUTE,'UTF-8');
     }
 
     function comprobarId($tipo){

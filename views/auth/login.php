@@ -11,7 +11,7 @@
             endforeach;
         ?>    
 
-        <form class="form" method="POST">
+        <form class="form form-tarjeta" method="POST">
             <legend>Email y Password</legend>
             <label for="email">Email</label>
             <input type="email" name="email" placeholder="Tu email" id="email" value="<?php echo s($auth->email); ?>">

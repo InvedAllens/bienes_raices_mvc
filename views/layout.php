@@ -15,6 +15,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bienes Raices</title>
     <link rel="stylesheet" href="<?php echo BASE_PATH; ?>/build/css/app.css">
+    <!-- tema moderno: sobrescribe estilos de app.css. Para volver al diseño anterior, quita esta linea -->
+    <link rel="stylesheet" href="<?php echo BASE_PATH; ?>/build/css/tema.css?v=<?php echo @filemtime(__DIR__.'/../public/build/css/tema.css') ?: 1; ?>">
 </head>
 <body>
     <header class="header <?php echo $inicio ? 'inicio':''; ?>">
@@ -28,7 +30,7 @@
                 </div>
                 <div class="barra-derecha">
                     <img class="boton-dark-mode" src="" alt="boton dark mode">
-                    <nav class="navegacion mostrar">
+                    <nav class="navegacion">
                         <a href="<?php echo BASE_PATH; ?>/nosotros">Nosotros</a>
                         <a href="<?php echo BASE_PATH; ?>/anuncios">Anuncios</a>
                         <a href="<?php echo BASE_PATH; ?>/blog">Blog</a>

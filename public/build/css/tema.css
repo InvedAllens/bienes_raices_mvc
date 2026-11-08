@@ -1,0 +1,268 @@
+/* =====================================================================
+   TEMA MODERNO - se carga DESPUES de app.css y solo sobrescribe estilos.
+   Para volver al diseño anterior basta quitar el <link> de tema.css en views/layout.php.
+   Los colores estan en variables (arriba) para cambiarlos en un solo lugar.
+   ===================================================================== */
+
+:root{
+    --verde:#15803d;            /* verde principal (botones, precios) */
+    --verde-claro:#16a34a;
+    --verde-suave:#dcfce7;
+    --ambar:#f59e0b;            /* acento */
+    --ambar-texto:#b45309;
+    --rojo:#dc2626;
+    --bg:#f3f5f8;               /* fondo de la pagina */
+    --surface:#ffffff;          /* tarjetas, tablas, formularios */
+    --surface-2:#f8fafc;
+    --texto:#1e293b;
+    --muted:#64748b;
+    --borde:#e2e8f0;
+    --nav:#0f172a;              /* cabecera y pie */
+    --chip:#f1f5f9;
+    --sombra:0 1px 2px rgba(15,23,42,.05),0 8px 24px rgba(15,23,42,.07);
+    --sombra-hover:0 4px 8px rgba(15,23,42,.06),0 20px 44px rgba(15,23,42,.15);
+    --radio:16px;
+}
+.dark-mode{
+    --verde:#4ade80;
+    --verde-claro:#22c55e;
+    --verde-suave:rgba(74,222,128,.14);
+    --ambar-texto:#fbbf24;
+    --bg:#0b1220;
+    --surface:#121c33;
+    --surface-2:#18233f;
+    --texto:#e5e7eb;
+    --muted:#94a3b8;
+    --borde:#223052;
+    --nav:#070d19;
+    --chip:#1a2644;
+    --sombra:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+    --sombra-hover:0 4px 8px rgba(0,0,0,.4),0 20px 44px rgba(0,0,0,.55);
+}
+
+/* ---------- base ---------- */
+body{background-color:var(--bg);color:var(--texto);-webkit-font-smoothing:antialiased}
+.dark-mode{background-color:var(--bg)}
+p{color:var(--texto);font-size:1.7rem;line-height:1.75}
+.dark-mode p{color:var(--texto)}
+.dark-mode a,.dark-mode blockquote,.dark-mode h1,.dark-mode h2,.dark-mode h3,.dark-mode h4,.dark-mode td{color:var(--texto)}
+h1,h2,h3,h4{color:var(--texto);letter-spacing:-.01em}
+h1,h2,h3,h4{line-height:1.25}
+h1,.mas-nosotros{font-weight:800}
+h2{font-weight:800}
+h3{font-weight:700}
+/* trazo decorativo bajo los titulos de seccion */
+h2:not(.sin-trazo)::after,.mas-nosotros::after{
+    content:"";display:block;width:6rem;height:.4rem;border-radius:999px;margin:1.2rem auto 0;
+    background:linear-gradient(90deg,var(--verde-claro),var(--ambar));
+}
+::selection{background:var(--verde-claro);color:#fff}
+:focus-visible{outline:3px solid rgba(34,197,94,.55);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- botones ---------- */
+.boton-verde,.boton-verde-block,.boton-amarillo,.boton-amarillo-block,.boton-rojo-block{
+    border-radius:12px;padding:1.1rem 2.6rem;font-size:1.6rem;font-weight:700;line-height:1.4;letter-spacing:.2px;
+    box-shadow:0 1px 2px rgba(15,23,42,.18);
+    transition:transform .15s ease,box-shadow .2s ease,background-color .2s ease,color .2s ease,border-color .2s ease;
+}
+.boton-verde:hover,.boton-verde-block:hover,.boton-amarillo:hover,.boton-amarillo-block:hover,.boton-rojo-block:hover{
+    transform:translateY(-2px);box-shadow:0 10px 22px rgba(15,23,42,.22);
+}
+.boton-verde:active,.boton-verde-block:active,.boton-amarillo:active,.boton-amarillo-block:active,.boton-rojo-block:active{transform:translateY(0)}
+.boton-verde,.boton-verde-block{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff}
+.boton-verde:hover,.boton-verde-block:hover{background:linear-gradient(135deg,#15803d,#166534)}
+.boton-amarillo,.boton-amarillo-block{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#2b1a00}
+.boton-amarillo:hover,.boton-amarillo-block:hover{background:linear-gradient(135deg,#f59e0b,#d97706)}
+.boton-rojo-block{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
+.boton-rojo-block:hover{background:linear-gradient(135deg,#dc2626,#b91c1c)}
+.boton-verde,.boton-amarillo{margin-right:1rem}
+.alinear-derecha .boton-verde{margin-right:0}
+
+/* ---------- cabecera y navegacion ---------- */
+.header{background-color:var(--nav);padding:1.2rem 0 3rem}
+.header:not(.inicio){padding-bottom:2.2rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.navegacion a{font-size:1.7rem;font-weight:600;letter-spacing:.2px;position:relative;padding:.6rem 0;color:rgba(255,255,255,.88)}
+.navegacion a::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:2px;background:var(--verde-claro);
+    transform:scaleX(0);transform-origin:left;transition:transform .25s ease;
+}
+.navegacion a:hover{color:#fff}
+.navegacion a:hover::after{transform:scaleX(1)}
+.dark-mode .navegacion a{color:rgba(255,255,255,.88)}
+.dark-mode .navegacion a:hover{color:#fff}
+.barra-derecha .boton-dark-mode{transition:transform .2s ease,opacity .2s ease;opacity:.9}
+.barra-derecha .boton-dark-mode:hover{transform:rotate(15deg) scale(1.12);opacity:1}
+/* portada: velo degradado para que el texto se lea siempre */
+.header.inicio{position:relative;isolation:isolate}
+.header.inicio::before{
+    content:"";position:absolute;inset:0;z-index:-1;
+    background:linear-gradient(180deg,rgba(15,23,42,.62) 0%,rgba(15,23,42,.28) 50%,rgba(15,23,42,.72) 100%);
+}
+.contenido-header h1{font-weight:800;line-height:1.15;letter-spacing:-.02em;text-shadow:0 2px 24px rgba(0,0,0,.45)}
+@media (min-width:768px){.contenido-header h1{font-size:4.8rem;max-width:62rem}}
+
+/* ---------- tarjetas de propiedades ---------- */
+.contenedor-anuncios{gap:2.8rem}
+.anuncio{
+    display:flex;flex-direction:column;overflow:hidden;margin-bottom:2.4rem;
+    background-color:var(--surface);border:1px solid var(--borde);border-radius:var(--radio);box-shadow:var(--sombra);
+    transition:transform .25s ease,box-shadow .25s ease;
+}
+.anuncio:hover{transform:translateY(-6px);box-shadow:var(--sombra-hover)}
+.dark-mode .anuncio{background-color:var(--surface)}
+.anuncio picture{display:block;overflow:hidden;aspect-ratio:4/3;background:var(--chip)}
+.anuncio picture img{height:100%;object-fit:cover;transition:transform .6s ease}
+.anuncio:hover picture img{transform:scale(1.06)}
+.anuncio .contenido-anuncio{display:flex;flex-direction:column;flex:1;padding:2.2rem 2.4rem 2.6rem}
+.anuncio .contenido-anuncio h3{text-align:left;font-size:2.1rem;font-weight:800;line-height:1.25}
+.titulo-propiedad,.descripcion-propiedad{height:auto;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical}
+.titulo-propiedad{-webkit-line-clamp:2;min-height:calc(2 * 1.25em);margin:0 0 1rem!important}
+.descripcion-propiedad{-webkit-line-clamp:3;color:var(--muted);font-size:1.55rem!important;line-height:1.65;margin:0 0 1.4rem!important}
+.dark-mode .descripcion-propiedad{color:var(--muted)}
+.precio{color:var(--verde);font-size:2.8rem;font-weight:800;letter-spacing:-.01em}
+.dark-mode .precio{color:var(--verde)}
+.anuncio .precio{margin:0 0 1.4rem!important}
+.iconos-caracteristicas{gap:1rem;max-width:none;margin:0 0 2rem;margin-top:auto}
+.iconos-caracteristicas li{flex:1;align-items:center;justify-content:center;gap:.4rem;padding:.8rem .4rem;background:var(--chip);border-radius:12px}
+.iconos-caracteristicas li img{flex:0 0 2.2rem;width:2.2rem;margin-right:.4rem}
+.iconos-caracteristicas li p{margin:0;font-size:1.5rem;font-weight:800;line-height:1}
+/* boton de la tarjeta: contorno que se rellena al pasar el mouse */
+.anuncio .boton-amarillo-block{
+    margin-top:0;background:transparent;color:var(--verde);box-shadow:none;border:2px solid var(--verde);
+    padding:1rem 2rem;
+}
+.anuncio .boton-amarillo-block:hover{background:var(--verde);color:#fff;box-shadow:0 10px 22px rgba(21,128,61,.28)}
+.dark-mode .anuncio .boton-amarillo-block{color:var(--verde)}
+.dark-mode .anuncio .boton-amarillo-block:hover{background:var(--verde);color:#06240f}
+
+/* ---------- "mas sobre nosotros" ---------- */
+.iconos-nosotros{gap:2.4rem}
+.iconos-nosotros .icono{
+    background:var(--surface);border:1px solid var(--borde);border-radius:var(--radio);box-shadow:var(--sombra);
+    padding:2.6rem 2.2rem;margin-bottom:2rem;transition:transform .25s ease,box-shadow .25s ease;
+}
+.iconos-nosotros .icono:hover{transform:translateY(-4px);box-shadow:var(--sombra-hover)}
+.iconos-nosotros .icono img{height:8rem;width:auto;margin:0 auto 1rem}
+.iconos-nosotros .icono h3{margin:1rem 0;font-size:2.3rem}
+.iconos-nosotros .icono p{margin:0;color:var(--muted);font-size:1.6rem}
+.dark-mode .iconos-nosotros .icono p{color:var(--muted)}
+
+/* ---------- bloque de contacto con imagen ---------- */
+.imagen-contacto{position:relative;isolation:isolate;padding:7rem 0}
+.imagen-contacto::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(135deg,rgba(15,23,42,.72),rgba(15,23,42,.45))}
+.imagen-contacto h2,.dark-mode .imagen-contacto h2{color:#fff;font-weight:800}
+.imagen-contacto p,.dark-mode .imagen-contacto p{color:rgba(255,255,255,.92)}
+.imagen-contacto h2::after{display:none}
+
+/* ---------- blog y testimoniales ---------- */
+.entrada-blog{margin-bottom:2.6rem}
+.entrada-blog img{border-radius:14px;box-shadow:var(--sombra)}
+.entrada-texto a,.dark-mode .entrada-texto a{color:var(--texto);transition:color .2s ease}
+.entrada-texto a:hover{color:var(--verde)}
+.entrada-texto h4{font-weight:800}
+.entrada-texto h4:after{background:linear-gradient(90deg,var(--verde-claro),var(--ambar));border-radius:999px;height:.4rem;width:8rem}
+.entrada-texto p{color:var(--muted)}
+.dark-mode .entrada-texto p{color:var(--muted)}
+.info-meta span{color:var(--ambar-texto);font-weight:700}
+.testimonial{
+    background:linear-gradient(135deg,#16a34a,#14532d);border-radius:22px;box-shadow:var(--sombra);padding:2.6rem 2.6rem 2.2rem;
+}
+.testimonial p,.dark-mode .testimonial p,.dark-mode .testimonial blockquote{color:#fff}
+
+/* ---------- detalle de la propiedad ---------- */
+.contenido-centrado picture img{border-radius:var(--radio);box-shadow:var(--sombra-hover)}
+.resumen-propiedad .precio{font-size:3.4rem}
+.resumen-propiedad .iconos-caracteristicas{max-width:48rem;margin-top:1.6rem}
+.contenido-centrado hr{border:0;border-top:1px solid var(--borde);margin:2.4rem 0}
+
+/* ---------- formularios ---------- */
+.form fieldset{
+    background:var(--surface);border:1px solid var(--borde);border-radius:var(--radio);box-shadow:var(--sombra);
+    padding:2.6rem 2.6rem .6rem;margin:0 0 2.6rem;
+}
+.form legend,.dark-mode .form legend{
+    font-size:1.3rem;font-weight:800;letter-spacing:.9px;padding:.5rem 1.4rem;border-radius:999px;
+    background:var(--verde-suave);color:var(--verde);
+}
+.form label,.dark-mode .form label{font-size:1.5rem;font-weight:700;color:var(--texto);margin:0 0 .5rem}
+.form p,.dark-mode .form p{color:var(--muted)}
+.form input:not([type=submit]),.form select,.form textarea,
+.dark-mode .form input:not([type=submit]),.dark-mode .form select,.dark-mode .form textarea{
+    background-color:var(--surface);border:1px solid var(--borde);color:var(--texto);border-radius:12px;padding:1.2rem 1.4rem;
+    margin-bottom:2.2rem;transition:border-color .2s ease,box-shadow .2s ease;
+}
+.dark-mode .form input:not([type=submit]),.dark-mode .form select,.dark-mode .form textarea{background-color:var(--surface-2)}
+.form input:not([type=submit]):focus,.form select:focus,.form textarea:focus{
+    outline:none;border-color:var(--verde-claro);box-shadow:0 0 0 4px rgba(34,197,94,.2);
+}
+.form textarea{resize:vertical;min-height:14rem}
+.form input[type=file]{padding:1rem}
+.form input[type=file]::file-selector-button{
+    margin-right:1.2rem;padding:.7rem 1.4rem;border:0;border-radius:10px;background:var(--verde);color:#fff;font-weight:700;cursor:pointer;
+}
+.dark-mode .form input[type=file]::file-selector-button{color:#06240f}
+.form input[type=submit]{margin-top:.5rem}
+.imagen-actualizar{border-radius:12px;box-shadow:var(--sombra);margin-bottom:2rem}
+
+/* botones de radio y casillas: tamaño propio (no el de un campo de texto) */
+.form input[type=radio],.form input[type=checkbox],
+.dark-mode .form input[type=radio],.dark-mode .form input[type=checkbox]{
+    width:auto;padding:0;margin:0;display:inline-block;accent-color:var(--verde-claro);box-shadow:none;background:transparent;
+}
+.forma-contacto{width:100%;max-width:34rem;margin-bottom:2rem}
+.forma-contacto label{margin:0;display:inline-block}
+
+/* formulario suelto (login): se presenta como tarjeta centrada */
+.form-tarjeta{
+    max-width:46rem;margin:0 auto;padding:2.8rem 2.8rem 1.6rem;
+    background:var(--surface);border:1px solid var(--borde);border-radius:var(--radio);box-shadow:var(--sombra);
+}
+.form-tarjeta > legend{display:block;width:fit-content;margin-bottom:2rem}
+
+/* ---------- avisos ---------- */
+.alerta{
+    text-transform:none;text-align:left;font-size:1.55rem;font-weight:600;letter-spacing:0;
+    padding:1.3rem 1.8rem;border-radius:12px;border-left:5px solid;box-shadow:0 1px 2px rgba(15,23,42,.05);
+}
+.alerta.error{background-color:#fef2f2;color:#991b1b;border-color:#dc2626}
+.alerta.exito{background-color:#f0fdf4;color:#166534;border-color:#16a34a}
+.dark-mode .alerta.error{background-color:rgba(220,38,38,.16);color:#fecaca;border-color:#ef4444}
+.dark-mode .alerta.exito{background-color:rgba(34,197,94,.14);color:#bbf7d0;border-color:#22c55e}
+
+/* ---------- panel de administracion (tablas) ---------- */
+.admin-h1{font-weight:800}
+table.propiedad{
+    border-collapse:separate;border-spacing:0;overflow:hidden;margin-top:3rem;
+    background:var(--surface);border:1px solid var(--borde);border-radius:var(--radio);box-shadow:var(--sombra);
+}
+table.propiedad thead{background:linear-gradient(135deg,#15803d,#16a34a)}
+table.propiedad thead th{padding:1.6rem 1.2rem;font-size:1.35rem;font-weight:800;letter-spacing:.9px;text-transform:uppercase}
+table.propiedad tbody tr,.dark-mode table.propiedad tbody tr,
+table.propiedad tbody tr:nth-child(odd),.dark-mode table.propiedad tbody tr:nth-child(odd){background-color:var(--surface);border:0}
+table.propiedad tbody td{padding:1.4rem 1.2rem;border-bottom:1px solid var(--borde);font-size:1.5rem;color:var(--texto);vertical-align:middle}
+table.propiedad tbody tr:last-child td{border-bottom:0}
+table.propiedad tbody tr:hover td{background-color:var(--surface-2)}
+table.propiedad .imagen-tabla{width:11rem;border-radius:10px;box-shadow:var(--sombra);margin:0 auto}
+table.propiedad td .boton-rojo-block,table.propiedad td .boton-amarillo-block{
+    margin-top:0;padding:.75rem 1.4rem;font-size:1.4rem;border-radius:10px;min-width:11rem;
+}
+table.propiedad td form + .boton-amarillo-block{margin-top:.8rem}
+.admin .boton-verde,.admin .boton-amarillo{margin-top:1.2rem}
+.admin h2{font-weight:800;margin-top:4.4rem}
+
+/* ---------- pie de pagina ---------- */
+.footer{background-color:var(--nav);border-top:1px solid rgba(255,255,255,.06)}
+.footer .navegacion a{margin-right:2.4rem}
+.footer .copyright{color:rgba(255,255,255,.65);font-size:1.5rem}
+
+/* ---------- movil ---------- */
+@media (max-width:767px){
+    .contenido-header h1{font-size:3rem}
+    .anuncio .contenido-anuncio{padding:2rem}
+    .form fieldset{padding:2rem 1.6rem .4rem}
+    table.propiedad thead th{padding:1.2rem .6rem;font-size:1.15rem}
+    table.propiedad tbody td{padding:1rem .6rem;font-size:1.3rem}
+    table.propiedad td .boton-rojo-block,table.propiedad td .boton-amarillo-block{min-width:0;padding:.7rem 1rem;font-size:1.25rem}
+    table.propiedad .imagen-tabla{width:7rem}
+}

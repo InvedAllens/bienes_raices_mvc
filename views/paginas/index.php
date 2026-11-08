@@ -39,7 +39,7 @@
                 </picture>
                 <div class="contenido-anuncio">
                     <h3 class="titulo-propiedad"><?php echo s($propiedad->titulo);?></h3>
-                    <p class="descripcion-propiedad"><?php echo s(substr($propiedad->descripcion,0,70));?>...</p>
+                    <p class="descripcion-propiedad"><?php echo s(mb_substr($propiedad->descripcion,0,70));?>...</p>
                     <p class="precio">$<?php echo s(number_format($propiedad->precio));?></p>
                     <ul class="iconos-caracteristicas">
                         <li>
